@@ -6,11 +6,20 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <title>Магазин</title>
   <style>
- [class*="netlify"], a[href*="netlify.com"] { display: none !important; }
-    :root { --bg: #1e1433; --card: #2a1f4a; --accent: #a78bfa; --text: #f5f3ff; --muted: #c4b5fd; }
+    :root { --accent: #a78bfa; --text: #f5f3ff; --muted: #c4b5fd; --card: rgba(42, 31, 74, 0.92); }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
-    h1 { text-align: center; color: var(--accent); margin: 8px 0 16px; }
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, sans-serif;
+      color: var(--text);
+      background: #0d0817 url("bg-phone.jpg") center / cover no-repeat fixed;
+      min-height: 100vh;
+    }
+    @media (min-width: 768px) {
+      body { background: #0d0817 url("bg-desktop.jpg") center / cover no-repeat fixed; }
+    }
+    h1 { text-align: center; color: var(--accent); margin: 8px 0 16px; text-shadow: 0 2px 8px #000; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .card { background: var(--card); border-radius: 16px; padding: 10px; border: 1px solid #3b2d63; }
     .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; background: #333; }
@@ -85,13 +94,5 @@
 
   render();
 </script>
-<script>
-  setInterval(() => {
-    document.querySelectorAll('a, div').forEach(el => {
-      if (el.textContent.trim() === 'Powered by Netlify' || (el.href && el.href.includes('netlify.com'))) {
-        el.style.display = 'none';
-      }
-    });
-  }, 500);
-</script>
 </body>
+</html>
