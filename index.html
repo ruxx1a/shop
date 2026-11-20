@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Магазин</title>
+  <style>
+ [class*="netlify"], a[href*="netlify.com"] { display: none !important; }
+    :root { --bg: #1e1433; --card: #2a1f4a; --accent: #a78bfa; --text: #f5f3ff; --muted: #c4b5fd; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    h1 { text-align: center; color: var(--accent); margin: 8px 0 16px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card { background: var(--card); border-radius: 16px; padding: 10px; border: 1px solid #3b2d63; }
+    .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; background: #333; }
+    .name { margin: 8px 0 4px; font-weight: 600; }
+    .price { color: var(--muted); margin-bottom: 8px; }
+    .btn { width: 100%; padding: 10px; border: 0; border-radius: 12px; background: var(--accent); color: #1e1433; font-weight: 600; font-size: 15px; cursor: pointer; }
+    .cart { position: sticky; bottom: 0; margin-top: 20px; background: var(--card); padding: 14px; border-radius: 16px; border: 1px solid #3b2d63; }
+    .cart-info { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Мой магазин</h1>
+  <div class="grid" id="catalog"></div>
+
+  <div class="cart">
+    <div class="cart-info">
+      <span>В корзине: <b id="count">0</b></span>
+      <span><b id="total">0</b> ₽</span>
+    </div>
+    <button class="btn" id="order">Оформить заказ</button>
+  </div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  // ===== ТОВАРЫ: меняйте здесь =====
+  const products = [
+    { id: 1, name: "Куртка Пример", price: 5000, img: "https://picsum.photos/seed/a/400" },
+    { id: 2, name: "Кроссовки Пример", price: 4000, img: "https://picsum.photos/seed/b/400" },
+    { id: 3, name: "Футболка Пример", price: 1500, img: "https://picsum.photos/seed/c/400" }
+  ];
+  // =================================
+
+  const cart = {};
+
+  function render() {
+    document.getElementById("catalog").innerHTML = products.map(p => `
+      <div class="card">
+        <img src="${p.img}" alt="${p.name}">
+        <div class="name">${p.name}</div>
+        <div class="price">${p.price} ₽</div>
+        <button class="btn" onclick="add(${p.id})">В корзину</button>
+      </div>`).join("");
+    updateCart();
+  }
+
+  function add(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    updateCart();
+  }
+
+  function updateCart() {
+    let count = 0, total = 0;
+    for (const id in cart) {
+      const p = products.find(x => x.id == id);
+      count += cart[id];
+      total += p.price * cart[id];
+    }
+    document.getElementById("count").textContent = count;
+    document.getElementById("total").textContent = total;
+  }
+
+  document.getElementById("order").onclick = () => {
+    const items = Object.keys(cart).map(id => {
+      const p = products.find(x => x.id == id);
+      return `${p.name} x${cart[id]}`;
+    });
+    if (!items.length) { tg?.showAlert?.("Корзина пуста"); return; }
+    tg?.showAlert?.("Заказ: " + items.join(", "));
+  };
+
+  render();
+</script>
+<script>
+  setInterval(() => {
+    document.querySelectorAll('a, div').forEach(el => {
+      if (el.textContent.trim() === 'Powered by Netlify' || (el.href && el.href.includes('netlify.com'))) {
+        el.style.display = 'none';
+      }
+    });
+  }, 500);
+</script>
+</body>
